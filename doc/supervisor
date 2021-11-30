@@ -1,0 +1,76 @@
+管理 Gunicorn 进程
+现在 Gunicorn 是我们手工启动的，一旦我们退出 shell，服务器就关闭了，博客无法访问。就算在后台启动 Gunicorn，万一哪天服务器崩溃重启了又得重新登录服务器去启动，非常麻烦。
+为此使用 Supervisor 来管理 Gunicorn 进程，这样当服务器重新启动或者 Gunicorn 进程意外崩溃后，Supervisor 会帮我们自动重启 Gunicorn。
+
+先按 Ctrl + C 停止刚才启动的 Gunicorn 服务进程。
+
+首先安装 Supervisor。
+pip install supervisor
+为了方便，我一般会设置如下的目录结构（位于 ~/etc 目录下）来管理 Supervisor 有关的文件：
+
+~/etc
+├── supervisor
+│   ├── conf.d
+│   └── var
+│       ├── log
+└── supervisord.conf
+其中 supervisord.conf 是 Supervior 的配置文件，它会包含 conf.d 下的配置。var 目录下用于存放一些经常变动的文件，例如 socket 文件，pid 文件，log 下则存放日志文件。
+
+首先来建立上述的目录结构：
+mkdir -p ./supervisor/conf.d
+mkdir -p ./supervisor/var/log
+
+生成 Supervisor 的配置文件：
+echo_supervisord_conf > supervisord.conf
+修改 supervisor.conf，让 Supervisor 进程产生的一些文件生成到上面我们创建的目录下，而不是其默认指定的地方。
+
+首先找到 [unix_http_server] 版块，将 file 设置改为如下的值：
+[unix_http_server]
+file=/home/slgweb/supervisor/var/supervisor.sock
+即让 socket 文件生成在 ~/etc/supervisor/var/ 目录下。注意 supervisor 不支持将 ~ 展开为用户 home 目录，所以要用绝对路径指定。
+
+类似的修改 [supervisord] 板块下的 logfile 和 pidfile 文件的路径，还有 user 改为系统用户，这样 supervisor 启动的进程将以系统用户运行，避免可能的权限问题：
+logfile=/home/slgweb/supervisor/var/log/supervisord.log
+pidfile=/home/slgweb/supervisor/var/supervisord.pid
+user=gjg
+
+还有 [supervisorctl] 板块下：
+serverurl=unix:///home/slgweb/supervisor/var/supervisor.sock
+
+[include] 版块，将 /home/gjg/etc/supervisor/conf.d/ 目录下所有以 .ini 结尾的文件内容包含到配置中来，这样便于配置的模块化管理，和之前 Nginx 配置文件的处理方式是类似的。
+[include]
+files = /home/gjg/etc/supervisor/conf.d/*.ini
+
+然后我们到 conf.d 新建我们博客应用的配置：
+[program:wasteland]
+command=pipenv run gunicorn -c gunicorn.py wasteland.wsgi -b 0.0.0.0:8001
+directory=/home/slgweb
+autostart=true
+autorestart=unexpected
+user=root
+stdout_logfile=/home/slgweb/supervisor/var/log/wasteland-stdout.log
+stderr_logfile=/home/slgweb/supervisor/var/log/wasteland-stderr.log
+environment=DJANGO_SECRET_KEY="ff6h42^=o)xwa)hq!62j!)b8f%qn+*nl$6ooc@@k-)w%7ycj83"
+
+说一下各项配置的含义：
+[program:wasteland] 指明运行应用的进程，名为 wasteland
+command 为进程启动时执行的命令。
+directory 指定执行命令时所在的目录。
+autostart 随 Supervisor 启动自动启动进程。
+autorestart 进程意外退出时重启。
+user 进程运行的用户，防止权限问题。
+stdout_logfile，stderr_logfile 日志输出文件。
+environment 环境变量，多个环境变量用逗号隔开
+
+启动 Supervisor
+supervisord -c ~/etc/supervisord.conf
+-c 指定 Supervisr 启动时的配置文件。
+
+进入 supervisorctl 进程管理控制台：
+supervisorctl -c ~/etc/supervisord.conf
+update                  #命令更新配置文件并启动应用。
+reload                  #重新启动配置中的所有程序
+start program_name      #启动某个进程(program_name=你配置中写的程序名称)
+stop program_name       #停止某一进程 (program_name=你配置中写的程序名称)
+restart program_name    #重启某一进程 (program_name=你配置中写的程序名称)
+stop all                #停止全部进程
