@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>玩家在线人数折线图</title>
+    <!-- 引入 echarts.js -->
+    {% load static %}
+    <script src="{% static '/js/echarts.min.js' %}"></script>
+</head>
+<body>
+  <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+  <div id="main" style="width:1200px;height:600px;"></div>
+  <script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    // 指定图表的配置项和数据
+    myChart.setOption({
+        // 标题
+        title: {
+            text: '玩家在线人数折线图'
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        // 图例-每一条数据的名字叫用例数
+        legend: {
+            data:['用例数']
+        },
+        // 工具箱-保存图片
+        toolbox: {
+            feature: {
+                saveAsImage: {
+                    show:true
+                }
+            }
+        },
+        // x轴
+        xAxis: {
+            data:["10/5", "10/6","10/7","10/8","10/9","10/10"]
+        },
+        // y轴自动生成
+        yAxis: {},
+        series: [
+            {
+            name:'用例数',
+            type:'line',       //折线图
+            // 图表数据
+            data:[30, 36, 38, 47, 49, 56]
+            }
+        ]
+    });
+  </script>
+</body>
+</html>

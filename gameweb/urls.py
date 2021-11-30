@@ -16,8 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import viewsTest
+from . import test2
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', viewsTest.hello),
+    path('testEcharts1/', viewsTest.testEcharts1),
+    path('test_axis_arrow/', viewsTest.test_axis_arrow),
+    path('testdb/', test2.testdb),
+    path('testdb2/', test2.querydb),
 ]

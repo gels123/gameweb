@@ -1,6 +1,6 @@
 # gameweb
 Web service for game.
-use django
+using django.
 
 Nginx+Gunicorn+Supervisor 部署 Django
 fabric自动化部署
@@ -80,3 +80,8 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 1. mysql配置，搜索 "django.db.backends.mysql"
 2. supervisord.conf 里面的路径配置
 3. 后台配置, 搜索"BACK_STAGE"
+
+
+报表
+echarts在线构建：
+http://echarts.apache.org/zh/builder.html
