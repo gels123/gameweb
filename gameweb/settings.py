@@ -24,13 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y32o$m3%sh%$6+3st0tx4z4-cd-^$d(lg*@(3%!9h+(1ws5b7a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.88.207', '192.168.88.71', '*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -81,13 +80,14 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
+    
     'default': { 
         'ENGINE': 'django.db.backends.mysql',    # 数据库引擎
         'NAME': 'web', # 数据库名称
-        'HOST': '192.168.88.5', # 数据库地址
+        'HOST': '192.168.88.207', # 数据库地址
         'PORT': 3306, # 数据库端口 
         'USER': 'root',  # 数据库用户名
-        'PASSWORD': '123', # 数据库密码
+        'PASSWORD': '1', # 数据库密码
     }  
 }
 
@@ -130,10 +130,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    # os.path.join(BASE_DIR, 'static')
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

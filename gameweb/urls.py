@@ -20,9 +20,14 @@ from . import test2
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path('hello/', viewsTest.hello),
-    path('testEcharts1/', viewsTest.testEcharts1),
-    path('test_axis_arrow/', viewsTest.test_axis_arrow),
+    
+    
+    
     path('testdb/', test2.testdb),
     path('testdb2/', test2.querydb),
+    
+    # 统计报表
+    path('test_axis_arrow/', viewsTest.test_axis_arrow),
 ]

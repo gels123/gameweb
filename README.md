@@ -85,3 +85,8 @@ export VIRTUALENVWRAPPER_VIRTUALENV=/usr/local/bin/virtualenv
 报表
 echarts在线构建：
 http://echarts.apache.org/zh/builder.html
+
+数据变化时需要执行：
+$ python3 manage.py migrate   # 创建表结构
+$ python3 manage.py makemigrations TestModel  # 让 Django 知道我们在我们的模型有一些变更
+$ python3 manage.py migrate TestModel   # 创建表结构
